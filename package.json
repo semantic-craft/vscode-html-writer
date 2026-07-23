@@ -1,0 +1,285 @@
+{
+  "name": "vscode-html-writer",
+  "displayName": "HTML Writer",
+  "description": "Read, review, and rewrite Chinese academic Markdown manuscripts through a live HTML workflow.",
+  "version": "0.0.8",
+  "publisher": "xianwei-zhang",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/semantic-craft/vscode-html-writer.git"
+  },
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.96.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "files": [
+    "out/**",
+    "docs/**",
+    "media/icon.png",
+    "media/activity-icon.svg",
+    "README.md",
+    "package.json"
+  ],
+  "activationEvents": [
+    "onCommand:vscodeHtmlWriter.openReader",
+    "onCommand:vscodeHtmlWriter.runRewritePipeline",
+    "onCommand:vscodeHtmlWriter.previewCandidate",
+    "onCommand:vscodeHtmlWriter.applyCandidate",
+    "onCommand:vscodeHtmlWriter.setApiKey",
+    "onCommand:vscodeHtmlWriter.selectProviderModel",
+    "onCommand:vscodeHtmlWriter.refreshSidebar",
+    "onView:vscodeHtmlWriter.cockpit"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "vscodeHtmlWriter",
+          "title": "HTML Writer",
+          "icon": "media/activity-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "vscodeHtmlWriter": [
+        {
+          "id": "vscodeHtmlWriter.cockpit",
+          "name": "Review Cockpit",
+          "icon": "media/activity-icon.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "vscodeHtmlWriter.cockpit",
+        "contents": "Open a Markdown manuscript, then start the HTML reading and rewrite workflow.\n[Open Paper Reader](command:vscodeHtmlWriter.openReader)\n[Run Rewrite Pipeline](command:vscodeHtmlWriter.runRewritePipeline)\n[Set Provider API Key](command:vscodeHtmlWriter.setApiKey)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "vscodeHtmlWriter.openReader",
+        "title": "HTML Writer: Open Paper Reader"
+      },
+      {
+        "command": "vscodeHtmlWriter.runRewritePipeline",
+        "title": "HTML Writer: Run Rewrite Pipeline"
+      },
+      {
+        "command": "vscodeHtmlWriter.previewCandidate",
+        "title": "HTML Writer: Preview Rewrite Candidate"
+      },
+      {
+        "command": "vscodeHtmlWriter.applyCandidate",
+        "title": "HTML Writer: Apply Rewrite Candidate"
+      },
+      {
+        "command": "vscodeHtmlWriter.setApiKey",
+        "title": "HTML Writer: Set Provider API Key"
+      },
+      {
+        "command": "vscodeHtmlWriter.selectProviderModel",
+        "title": "HTML Writer: Select Provider Model"
+      },
+      {
+        "command": "vscodeHtmlWriter.refreshSidebar",
+        "title": "HTML Writer: Refresh Sidebar",
+        "icon": "$(refresh)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "vscodeHtmlWriter.refreshSidebar",
+          "when": "view == vscodeHtmlWriter.cockpit",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "HTML Writer",
+      "properties": {
+        "vscodeHtmlWriter.provider": {
+          "type": "string",
+          "enum": [
+            "qwen",
+            "deepseek",
+            "gemini",
+            "anthropic",
+            "mimo"
+          ],
+          "default": "qwen",
+          "description": "Default AI provider for the five-step rewrite pipeline."
+        },
+        "vscodeHtmlWriter.providerOrder": {
+          "type": "string",
+          "default": "qwen,deepseek,gemini,anthropic,mimo",
+          "description": "Comma-separated provider fallback order."
+        },
+        "vscodeHtmlWriter.stepProviders": {
+          "type": "object",
+          "default": {},
+          "description": "Optional per-step provider override, keyed by facts, structure, draft, audit, or title."
+        },
+        "vscodeHtmlWriter.requestTimeoutSeconds": {
+          "type": "number",
+          "default": 60,
+          "description": "Timeout for each AI provider request."
+        },
+        "vscodeHtmlWriter.maxOutputTokens": {
+          "type": "number",
+          "default": 4096,
+          "description": "Maximum output tokens for each pipeline step."
+        },
+        "vscodeHtmlWriter.reasoningMode": {
+          "type": "string",
+          "enum": [
+            "off",
+            "on",
+            "auto"
+          ],
+          "default": "off",
+          "description": "Provider reasoning/thinking mode where supported."
+        },
+        "vscodeHtmlWriter.styleGuide": {
+          "type": "string",
+          "default": "",
+          "description": "Optional style guide examples used by the draft step."
+        },
+        "vscodeHtmlWriter.qwen.baseURL": {
+          "type": "string",
+          "default": "https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1",
+          "description": "Qwen Token Plan OpenAI-compatible Base URL."
+        },
+        "vscodeHtmlWriter.qwen.anthropicBaseURL": {
+          "type": "string",
+          "default": "https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic",
+          "description": "Qwen Token Plan Anthropic-compatible Base URL used by default."
+        },
+        "vscodeHtmlWriter.qwen.protocol": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic"
+          ],
+          "default": "anthropic",
+          "description": "Primary protocol for Qwen Token Plan. Anthropic Messages is preferred when available; OpenAI-compatible is kept as fallback."
+        },
+        "vscodeHtmlWriter.qwen.fallbackAnthropic": {
+          "type": "boolean",
+          "default": true,
+          "description": "Try the alternate Qwen Token Plan protocol if the primary Qwen protocol fails."
+        },
+        "vscodeHtmlWriter.qwen.model": {
+          "type": "string",
+          "enum": [
+            "qwen3.6-flash",
+            "qwen3.6-plus",
+            "qwen3.7-max",
+            "qwen3.7-max-2026-05-20",
+            "qwen3-coder-next",
+            "qwen3-coder-plus"
+          ],
+          "default": "qwen3.6-flash",
+          "description": "Qwen model for Token Plan. 3.6 Flash is the fast default; 3.7 Max is the strongest current Qwen option."
+        },
+        "vscodeHtmlWriter.deepseek.baseURL": {
+          "type": "string",
+          "default": "https://api.deepseek.com/anthropic",
+          "description": "DeepSeek Anthropic-compatible Base URL."
+        },
+        "vscodeHtmlWriter.deepseek.model": {
+          "type": "string",
+          "enum": [
+            "deepseek-v4-flash",
+            "deepseek-v4-pro"
+          ],
+          "default": "deepseek-v4-flash",
+          "description": "DeepSeek V4 model. Flash is faster and cheaper; Pro is stronger for harder reasoning."
+        },
+        "vscodeHtmlWriter.gemini.baseURL": {
+          "type": "string",
+          "default": "https://generativelanguage.googleapis.com/v1beta"
+        },
+        "vscodeHtmlWriter.gemini.model": {
+          "type": "string",
+          "enum": [
+            "gemini-3.5-flash",
+            "gemini-3.1-pro",
+            "gemini-3.1-pro-preview",
+            "gemini-3-flash-preview",
+            "gemini-3.1-flash-lite"
+          ],
+          "default": "gemini-3.5-flash",
+          "description": "Gemini model. 3.5 Flash is the fast default; 3.1 Pro maps to the official gemini-3.1-pro-preview API ID."
+        },
+        "vscodeHtmlWriter.anthropic.baseURL": {
+          "type": "string",
+          "default": "https://api.anthropic.com",
+          "description": "Anthropic native Messages API Base URL."
+        },
+        "vscodeHtmlWriter.anthropic.model": {
+          "type": "string",
+          "enum": [
+            "claude-opus-4-8",
+            "claude-sonnet-4-6",
+            "claude-haiku-4-5-20251001",
+            "claude-haiku-4-5"
+          ],
+          "default": "claude-sonnet-4-6",
+          "description": "Anthropic Claude model. Sonnet is the balanced default; Opus is the strongest option."
+        },
+        "vscodeHtmlWriter.mimo.baseURL": {
+          "type": "string",
+          "default": "https://token-plan-cn.xiaomimimo.com/v1",
+          "description": "MiMo Token Plan OpenAI-compatible Base URL."
+        },
+        "vscodeHtmlWriter.mimo.anthropicBaseURL": {
+          "type": "string",
+          "default": "https://token-plan-cn.xiaomimimo.com/anthropic",
+          "description": "MiMo Token Plan Anthropic-compatible Base URL."
+        },
+        "vscodeHtmlWriter.mimo.protocol": {
+          "type": "string",
+          "enum": [
+            "openai",
+            "anthropic"
+          ],
+          "default": "anthropic",
+          "description": "Primary protocol for MiMo Token Plan."
+        },
+        "vscodeHtmlWriter.mimo.model": {
+          "type": "string",
+          "enum": [
+            "mimo-v2.5-pro",
+            "mimo-v2.5",
+            "mimo-v2-omni",
+            "mimo-v2-pro"
+          ],
+          "default": "mimo-v2.5",
+          "description": "MiMo model. V2.5 is the default; V2.5 Pro is the stronger option."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p .",
+    "watch": "tsc -watch -p .",
+    "test": "vitest run",
+    "check": "npm run compile && npm test",
+    "package": "vsce package --no-dependencies",
+    "smoke:vscode": "node scripts/vscode-smoke.mjs",
+    "probe:qwen-token-plan": "node scripts/probe-qwen-token-plan.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.96.0",
+    "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.9.1",
+    "typescript": "^5.7.2",
+    "vitest": "^4.1.7"
+  }
+}

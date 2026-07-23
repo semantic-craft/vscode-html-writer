@@ -1,0 +1,17 @@
+.vscode/**
+.vscode-test/**
+src/**
+test/**
+docs/**
+.firecrawl/**
+**/*.ts
+**/*.map
+**/tsconfig.json
+**/vitest.config.*
+esbuild.js
+.gitignore
+.prettierrc
+.eslintrc*
+package-lock.json
+**/.DS_Store
+**/*.code-workspace

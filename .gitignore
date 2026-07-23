@@ -1,0 +1,15 @@
+node_modules/
+out/
+*.vsix
+.paper-html-writer/
+.vscode-test/
+.firecrawl/
+
+# Internal agent/session working notes — never publish.
+docs/*.code-workspace
+docs/CLAUDE_CODE_OPEN_*.md
+docs/CLAUDE_CODEX_*.md
+docs/*_CLAUDE_CODEX_*.md
+docs/PAPER_OUTPUT_BOARD_*.md
+docs/TODAY_THREADS_*.md
+docs/workdir-thread-entries/
